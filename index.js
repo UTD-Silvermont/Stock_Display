@@ -12,14 +12,21 @@ import ReactEcharts from 'echarts-for-react'
 
 import axios from 'axios'
 
+import qs from 'querystring'
+
 class LineA extends React.Component {
     constructor(props){
         super(props);
-        this.state = {xAxis: [], data: [], symbol: this.props.symbol};
+        this.state = {xAxis: [], data: [], symbol: this.props.symbol, fun: this.props.fun};
     }
 
     componentDidMount(){
-        axios.get('http://localhost:8081/stock/v1/current-week?interval=60&symbol=' + this.props.symbol)
+        var data = {
+            'interval': '5',
+            'symbol': this.props.symbol
+        };
+        var content = qs.stringify(data);
+        axios.get('http://localhost:8081/stock/v1/'+ this.props.fun + '?' + content)
             .then(response => {
                 return response.data;
             })
@@ -32,7 +39,7 @@ class LineA extends React.Component {
                     xAxis.push(t);
                     data.push(obj.history[t].close);
                 }
-                this.setState({xAxis: xAxis, data: data, symbol: this.props.symbol});
+                this.setState({xAxis: xAxis, data: data, symbol: this.props.symbol, fun: this.props.fun});
                 console.log(xAxis);
                 console.log(data);
             })
@@ -56,7 +63,8 @@ class LineA extends React.Component {
             },
             yAxis: {
                 type: 'value',
-                min: 'dataMin'
+                min: 'dataMin',
+                axisLabel: {formatter:'${value}'}
             },
             series : [
                 {
@@ -78,4 +86,4 @@ class LineA extends React.Component {
     }
 }
 
-ReactDOM.render(<LineA symbol="SNAP"/>, document.getElementById('root'));
+ReactDOM.render(<LineA fun='past-5-years' symbol="AAPL"/>, document.getElementById('root'));
