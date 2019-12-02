@@ -1,0 +1,7 @@
+require react, axios, antd, echarts-for-react
+
+For using Current Price API (see Stock_Service for details)
+
+Pass the stock symbol when using 'LineA' component
+
+If want to change API, just change the URL in axios.get
